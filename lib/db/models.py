@@ -1,6 +1,6 @@
 from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import backref, relationship
+from sqlalchemy.orm import backref, relationship, mapped_column, Mapped
 
 Base = declarative_base()
 
@@ -20,7 +20,11 @@ class User(Base):
     id = Column(Integer(), primary_key=True)
     first_name = Column(String())
     last_name = Column(String())
-    task = relationship('Task', backref=backref('User'))
+    task = relationship( 
+        'Task',
+        secondary = 'joins'
+    )
+
 
 class Task(Base):
 
@@ -34,14 +38,19 @@ class Task(Base):
     
     id = Column(Integer(), primary_key=True)
     task = Column(String())
-    user = relationship('User', backref=backref('Task'))
+    user = relationship(
+        'User',
+        secondary = 'joins'
+    )
 
 
 class JoinUserTask(Base):
 
     __tablename__ = 'joins'
 
-    id = id = Column(Integer(), primary_key=True)
+    PrimaryKeyConstraint = 'id'
+
+    id = Column(Integer(), primary_key=True)
     task = Column(Integer(), ForeignKey('tasks.id'))
     user = Column(Integer(), ForeignKey('users.id'))
 
